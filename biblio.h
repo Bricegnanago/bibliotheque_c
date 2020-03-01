@@ -1,10 +1,11 @@
 typedef struct Client Client;
 typedef struct Book Book;
 typedef struct User User;
-typedef struct Category Category;
+
 
 struct User
 {
+    int user_id;
     char username[20];
     char password[20];
 };
@@ -26,7 +27,7 @@ struct Client
 
 struct Book
 {
-    int livre_id;
+    int book_id;
     char title[100];
     char description[200];
     char author[50];
@@ -34,13 +35,14 @@ struct Book
     char category[50];
     int nb_page;
     char last_update[15];
+    int qty;
 };
 
 
 
 void insertClient(Client dataClientHost); //ok
 void insertBook(Book dataBookHost); //ok
-void insertCategory(Category data); //ok
+
 void readAll(char table_name[10]); //ok
 void updateClient(Client dataClientHost, Client DataClientOfUpdate); //ok
 void updateBook(Book dataBookHost, Book DataBookOfUpdate); //ok
@@ -51,7 +53,13 @@ int checkIfBookExist(Book data);
 int checkIfUserExist(User data);
 int authentification(User user);
 void borrowOneBook(Book book, Client client, User borrower);
+int getIdUser(User user);
+void returnOneBook(Book book, Client client, User borrower);
 int getIdOfClient(Client client);
 int getIdOfBook(Book book);
+int checkStockOfBook(Book book);
+int checkIfAlreadyBorrow(Client client);
 
 // bool authentification(User user);
+// si un livre est emprunté alors on décrémente le nombre de livre est décrémenté dans la base
+// de données on insère les 

@@ -182,6 +182,8 @@ int main(int argc, char **argv)
                 printf("Categorie : ");
                 scanf("%s", book.category);
 
+                printf("Quantité en stock : ");
+                scanf("%d", &book.qty);
                 // insertion
                 insertBook(book);                
                 
@@ -231,10 +233,8 @@ int main(int argc, char **argv)
             break;
         
         case 3:
-            // code empreint
-            
+            // code empreint            
             printf("Quel livre aimeriez-vous emprunter ?\n\n");
-            
             /********* Info Client ********/
             printf("Veuillez saisir le nom du client : ");
             scanf("%s", client.firstname);
@@ -246,7 +246,24 @@ int main(int argc, char **argv)
 
             borrowOneBook(bookHost, client, user_session);
             
-            printf("***********\n\n Opération effectuée avec succès *****************\n");
+            printf("*********** \n\n Opération effectuée avec succès ***************** \n\n");
+            break;
+
+        case 4:
+            // code empreint            
+            printf("Quel livre aimeriez-vous deposer ?\n\n");
+            /********* Info Client ********/
+            printf("Veuillez saisir le nom du client : ");
+            scanf("%s", client.firstname);
+            printf("Veuillez saisir le numero de carte du client : ");
+            scanf("%s", client.numcart);
+
+            printf("Saisir ici le title du livre : ");
+            scanf("%s", bookHost.title);
+
+            returnOneBook(bookHost, client, user_session);
+            
+            printf("*********** \n\n Opération effectuée avec succès ***************** \n\n");
             break;
         
         default:

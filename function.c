@@ -65,9 +65,9 @@ void insertBook(Book book){
         }   
         char buf[1024] = {};
         char query_string[] = { 
-            "INSERT INTO Book VALUES(null, '%d', '%s', '%s', '%s', '%s', NOW(), null, 0)"
+            "INSERT INTO Book VALUES(null, '%d', '%s', '%s', '%s', '%s', NOW(), null, 0, '%d')"
         };
-        sprintf(buf, query_string, book.nb_page, book.author, book.description, book.title, book.category);    
+        sprintf(buf, query_string, book.nb_page, book.author, book.description, book.title, book.category, book.qty);
         
         if (mysql_query(con,buf)){
             finish_with_error(con);
@@ -269,10 +269,10 @@ int checkIfClientExist(Client data){
     char buf[1024] = {};
     
     char query_string[] = { 
-        "SELECT count(client_id) FROM Client WHERE numcart='%s'"
+        "SELECT count(*) FROM Client WHERE numcart='%s' OR firstname='%s'"
     };
     
-    sprintf(buf, query_string, data.numcart);
+    sprintf(buf, query_string, data.numcart, data.firstname);
     if (mysql_query(con,buf)){
         finish_with_error(con);
     }
@@ -282,14 +282,8 @@ int checkIfClientExist(Client data){
     
     MYSQL_ROW row;    
     while ((row = mysql_fetch_row(result))) 
-    { 
-        for(int i = 0; i < num_fields; i++) 
-        { 
-            // printf("%s", row[i] ? row[i] : "NULL");
-            num_fields = atoi(row[i]);
-        } 
-            printf("\n"); 
-    }
+        num_fields = atoi(row[0]);           
+
     if(num_fields > 0)
         flag = 0; //ok
     else
@@ -298,13 +292,6 @@ int checkIfClientExist(Client data){
     mysql_close(con);
     return flag;
 }
-
-
-// int getIdOfClient(Client client){
-//     int flacheckIfClientExist(client);
-// }
-
-
 
 int checkIfBookExist(Book data){
     int flag;
@@ -345,9 +332,9 @@ int checkIfBookExist(Book data){
 
     // printf("\nj === %d\n\n", j);
     if(num_fields > 0)
-        flag = 0; //ok
+        flag = 0; // 0 si le client existe
     else
-        flag = 1; //nok    
+        flag = 1; //nok 1 si le client n'existe pas
     mysql_free_result(result);
     mysql_close(con);
     return flag;
@@ -387,144 +374,321 @@ int checkIfUserExist(User data){
     }
     
     if(num_fields > 0)
-        flag = 0; //ok
+        flag = 0; //ok 0 si l'utilisateur existe 
     else
-        flag = 1; //nok    
+        flag = 1; //nok 1 si l'utilisateur n'existe pas
     mysql_free_result(result);
     mysql_close(con);
     return flag;
 }
 
-// int authentification(User user){
-
-//     // 
-
-//     return flag;
-// }
-
 void borrowOneBook(Book book, Client client, User borrower){
 
     // Debut verfication d'existence
     int flag_client = checkIfClientExist(client);
-    int flag_book = checkIfBookExist(book);
-    int flag = flag_book + flag_client;
-    //Fin verification existence
-    if (flag == 0){ //ok 
+    
+    int flag_book = checkIfBookExist(book);    
+    int flag_stock = checkStockOfBook(book);
+
+    int flag_exist = checkIfAlreadyBorrow(client);
+    if(flag_exist == 0){
+        printf("Veuillez retourner le dernier livre que vous avez emprunté !\n\n");
+        exit(1);
+    }
+    if(flag_stock == 0){
+        // Impossible d'aller plus loin; sortir du programme
+        printf("Le stock du livre %s est epuisé. Veuillez repasser plutard ! \n\n", book.title);
+        exit(1);
+    }else if(flag_client == 1){
+        printf("Veuillez enregistrer le client svp !!! \n\n");
+        exit(1);
+    }else if(flag_book == 1){
+        printf("Ce livre n'a pas encore été enregistré !!!\n\n");
+        exit(1);
+    }else{    
+        //Fin verification existence
+       
         MYSQL *con = mysql_init(NULL);
         if (con == NULL){
             fprintf(stderr, "mysql_init() failed\n");
             exit(1);
         }
-
+        
         if (mysql_real_connect(con, "localhost", "root", "root","testdb", 0, NULL, 0) == NULL){
             finish_with_error(con);
         }   
-        char buf[1024] = {};
+        
         /***************** Recuperer l'identifiant du livre ********************/ 
-        char query_string_Client[] = {
-            "SELECT client_id from Client WHERE firstname='%s' OR numcart='%s'"
-        };
-        sprintf(buf, query_string_Client, client.firstname, client.numcart);
-        printf("req client_id = %s\n", buf);
-        if (mysql_query(con,buf)){
-            finish_with_error(con);
-        }
+                 
         
+        /***************** Fin Recuperer l'identifiant du livre **********************/
+        /***************** Debut Recuperer l'identifiant du livre ********************/        
 
-        MYSQL_RES * result_cli = mysql_store_result(con);  
-        int num_fields_cli = mysql_num_fields(result_cli);    
-        MYSQL_ROW row_cli;    
-        while ((row_cli = mysql_fetch_row(result_cli))) 
-        { 
-            // for(int i = 0; i < num_fields_cli; i++)            
-            //     num_fields_cli = atoi(row_cli[i]);
-            //     printf("\n");        
-            num_fields_cli = atoi(row_cli[0]);
-        }
-        printf("client id : %d\n", num_fields_cli);
-        mysql_free_result(result_cli);           
-        
         /***************** Fin Recuperer l'identifiant du livre ********************/ 
 
-
-        /***************** Debut Recuperer l'identifiant du livre ********************/
-         char query_string_Book[] = {
-            "SELECT livre_id from Book WHERE title='%s'"
-        };
-        sprintf(buf, query_string_Book, book.title);
-        printf("req livre_id = %s\n", buf);
-        if (mysql_query(con,buf )){
-            finish_with_error(con);
-        }
-        MYSQL_RES * result_book = mysql_store_result(con);  
-        int num_fields_book = mysql_num_fields(result_book);    
-
-        MYSQL_ROW row_book;      
-        while ((row_book = mysql_fetch_row(result_book))) 
-        { 
-            // for(int i = 0; i < num_fields_book; i++)            
-            //     num_fields_book = atoi(row_book[i]);
-            //     printf("\n");
-            num_fields_book = atoi(row_book[0]);
-            // printf(" livre id 00000 : %d\n\n", atoi(row_book[0]));
-                
-        }
-        printf("livre id : %d\n", num_fields_book);
-        mysql_free_result(result_book);        
-
-       /***************** Fin Recuperer l'identifiant du livre ********************/ 
-        /***************** Recuperer l'identifiant de l'emprunteur ********************/ 
-        char query_string_Borrower[] = {
-            "SELECT user_id from superuser WHERE username='%s'"
-        };        
-        sprintf(buf, query_string_Borrower, borrower.username);
-        printf("req user_id = %s\n", buf);
-        if (mysql_query(con,buf)){
-            finish_with_error(con);
-        }
-        
-        MYSQL_RES * result_borrower = mysql_store_result(con);
-        int num_fields_borrower = mysql_num_fields(result_borrower);    
-
-        MYSQL_ROW row_borrower;
-        while ((row_borrower = mysql_fetch_row(result_borrower))) 
-        { 
-            // for(int i = 0; i < num_fields_borrower; i++)            
-            //     num_fields_borrower = atoi(row_borrower[i]);
-            //     printf("\n");
-            num_fields_borrower = atoi(row_borrower[0]);
-        }
-        printf("user id : %d\n", num_fields_borrower);
-        mysql_free_result(result_borrower);         
-        /***************** Fin Recuperer l'identifiant de l'emprunteur ********************/ 
-        
+        char buf[1024] = {};
 
         char query_string[] = { 
-            "INSERT INTO Borrow VALUES(null, '%d', '%d', NOW(), '%d')"
+            "INSERT INTO Borrow VALUES(null, '%d', '%d', NOW(), '%d', 0, null)"
         };
-        sprintf(buf, query_string, num_fields_cli, num_fields_book, num_fields_borrower);
+        sprintf(buf, query_string, getIdOfClient(client), getIdOfBook(book), getIdUser(borrower));
 
         if (mysql_query(con,buf)){
             finish_with_error(con);
         }
 
         /****** Modification du status de disponibilié du livre emprunté ***********/
-
-        int status = 1;
+        // Juste après insertion dans la base de données il faut decrementer le stock
+        // de ce livre                                    
         char query_status_book[] = { 
-            "UPDATE Book SET statusBook='%d' WHERE livre_id='%d'"
+            "UPDATE Book SET qty='%d'-1 WHERE livre_id='%d'"
         };
-        sprintf(buf, query_status_book, status, num_fields_book);
-        printf("query status : %s", buf);
+        sprintf(buf, query_status_book, flag_stock, getIdOfBook(book));
+        // printf("query status : %s", buf);
         if (mysql_query(con,buf)){
             finish_with_error(con);
         }
         mysql_close(con);
 
-        printf("\nDonnée insérée avec succès\n\n");
-    }else{
-        printf("\nCe Client existe déja dans la base de données\n\n");
-        exit(1);
+        printf("\nDonnée insérée avec succès\n\n");        
     }
     
+}
+
+/* Retourner une livre dejà emprunté */
+void returnOneBook(Book book, Client client, User borrower){
+    int flag_stock = checkStockOfBook(book);
+    int flag_client = checkIfClientExist(client);
+    int flag_exist = checkIfAlreadyBorrow(client);
+    if(flag_exist == 1){ // le client a-t-il déjà fait un emprunt sans retourner ?
+        printf("Aucun retour pour %s !\n\n", client.firstname);
+        exit(1);
+    }
+
+    if(flag_client == 1){
+        printf("Ce livre n'existe pas dans notre base de données");
+        exit(1);
+    }
+    int flag_book = checkIfBookExist(book);
+    /*Ce livre a-t-il vraiment emprunté ce livre */
+    if(flag_book == 1){
+        printf("Ce livre n'existe pas dans notre base de données");
+        exit(1);
+    }else{
+        MYSQL *con = mysql_init(NULL);
+        if (con == NULL){
+            fprintf(stderr, "mysql_init() failed\n");
+            exit(1);
+        }
+        //connexion à la base de données
+        if (mysql_real_connect(con, "localhost", "root", "root","testdb", 0, NULL, 0) == NULL)
+            finish_with_error(con);  
+
+        char buf[1024] = {};
+        char query_string[] = {
+            "UPDATE Borrow SET DateOfReturn = NOW(), status='1' WHERE client_id='%d' AND livre_id='%d' AND DateOfReturn IS NULL "
+        };
+
+
+
+        sprintf(buf, query_string, getIdOfClient(client), getIdOfBook(book));
+        // printf("query status : %s", buf);
+        if (mysql_query(con,buf)){
+            finish_with_error(con);
+        }
+
+        /****** Modification du status de disponibilié du livre emprunté ***********/
+        // Juste après insertion dans la base de données il faut decrementer le stock
+        // de ce livre                                    
+        char query_status_book[] = { 
+            "UPDATE Book SET qty='%d'+1, last_update=NOW() WHERE livre_id='%d'"
+        };
+        sprintf(buf, query_status_book, flag_stock, getIdOfBook(book));
+        // printf("query status : %s", buf);
+
+        if (mysql_query(con,buf)){
+            finish_with_error(con);
+        }
+        mysql_close(con);
+    }
+}
+
+int checkStockOfBook(Book book){
+    int flag;
+    MYSQL *con = mysql_init(NULL);
+    if (con == NULL){
+        fprintf(stderr, "mysql_init() failed\n");
+        exit(1);
+    }  
+    
+    if (mysql_real_connect(con, "localhost", "root", "root","testdb", 0, NULL, 0) == NULL)
+        finish_with_error(con); 
+    char buf[1024] = {};
+    int fixed_qty = 0;
+    char query_string[] = { 
+        "SELECT qty FROM Book WHERE title='%s'"
+    };
+    
+    sprintf(buf, query_string, book.title);
+    if (mysql_query(con,buf))
+        finish_with_error(con);
+
+    MYSQL_RES * result = mysql_store_result(con);
+    int num_fields = mysql_num_fields(result);
+    MYSQL_ROW row;      
+    while ((row = mysql_fetch_row(result)))
+            num_fields = atoi(row[0]);
+    
+    mysql_free_result(result);
+    mysql_close(con);
+    
+    return num_fields; // retourne le nombre de livre en stock
+}
+
+int getIdOfClient(Client client){
+        
+        MYSQL *con = mysql_init(NULL);        
+        if (con == NULL)
+        {
+            fprintf(stderr, "mysql_init() failed\n");
+            exit(1);
+        }  
+        
+        if (mysql_real_connect(con, "localhost", "root", "root", "testdb", 0, NULL, 0) == NULL){
+            finish_with_error(con);
+        }   
+        // select count(*) from borrow where book_id='%d' and client_id='%d'
+        char buf[1024] = {};
+        char query_string[] = { 
+            "SELECT client_id FROM Client WHERE firstname='%s'"
+        };
+        sprintf(buf, query_string, client.firstname);
+        
+        if (mysql_query(con,buf)){
+            finish_with_error(con);
+        }
+    MYSQL_RES * result = mysql_store_result(con);
+    int num_fields = mysql_num_fields(result);
+
+    MYSQL_ROW row;      
+    while ((row = mysql_fetch_row(result)))
+            num_fields = atoi(row[0]);
+    
+    mysql_free_result(result);
+    mysql_close(con);
+    return num_fields;
+}
+
+int getIdOfBook(Book book){
+        
+        MYSQL *con = mysql_init(NULL);        
+        if (con == NULL)
+        {
+            fprintf(stderr, "mysql_init() failed\n");
+            exit(1);
+        }  
+        
+        if (mysql_real_connect(con, "localhost", "root", "root", "testdb", 0, NULL, 0) == NULL){
+            finish_with_error(con);
+        }   
+        // select count(*) from borrow where book_id='%d' and client_id='%d'
+        char buf[1024] = {};
+        char query_string[] = { 
+            "SELECT livre_id FROM Book WHERE title='%s'"
+        };
+        sprintf(buf, query_string, book.title);
+        
+        if (mysql_query(con,buf)){
+            finish_with_error(con);
+        }
+    MYSQL_RES * result = mysql_store_result(con);
+    int book_id = mysql_num_fields(result);
+
+    MYSQL_ROW row;      
+    while ((row = mysql_fetch_row(result)))
+        book_id = atoi(row[0]);
+    
+    mysql_free_result(result);
+    mysql_close(con);
+    return book_id;
+}
+
+
+
+int checkIfAlreadyBorrow(Client data_client){
+    data_client.client_id = getIdOfClient(data_client);
+    int flag;
+    MYSQL *con = mysql_init(NULL);
+    if (con == NULL){
+        fprintf(stderr, "mysql_init() failed\n");
+        exit(1);
+    }  
+    
+    if (mysql_real_connect(con, "localhost", "root", "root","testdb", 0, NULL, 0) == NULL)
+        finish_with_error(con); 
+    char buf[1024] = {};    
+    char query_string[] = { 
+        "select count(*) from Borrow where client_id='%d' AND DateOfreturn is null"
+    };
+    
+    sprintf(buf, query_string, data_client.client_id);
+
+    // printf("\n\n requete : %s\n\n", buf);
+    if (mysql_query(con,buf)){
+        finish_with_error(con);
+    }
+
+    MYSQL_RES * result = mysql_store_result(con);
+    int num_fields = mysql_num_fields(result);  
+    MYSQL_ROW row;      
+    while ((row = mysql_fetch_row(result)))
+            num_fields = atoi(row[0]);
+    
+    mysql_free_result(result);
+    mysql_close(con);
+    
+    if (num_fields != 0)
+        return 0; // le client a empreinter sans retourner
+    else
+        return 1; //contraire
+    // retourne le nombre de livre en stock
+}
+
+int getIdUser(User borrower){
+            /***************** Recuperer l'identifiant de l'emprunteur ********************/ 
+        MYSQL *con = mysql_init(NULL);        
+        if (con == NULL)
+        {
+            fprintf(stderr, "mysql_init() failed\n");
+            exit(1);
+        }  
+        
+        if (mysql_real_connect(con, "localhost", "root", "root", "testdb", 0, NULL, 0) == NULL){
+            finish_with_error(con);
+        }   
+        // select count(*) from borrow where book_id='%d' and client_id='%d'
+
+        char buf[1024] ={};
+        char query_string_Borrower[] = {
+            "SELECT user_id from superuser WHERE username='%s'"
+        };
+        sprintf(buf, query_string_Borrower, borrower.username);        
+        if (mysql_query(con,buf)){
+            finish_with_error(con);
+        }
+        
+        MYSQL_RES * result_borrower = mysql_store_result(con);
+        int user_id = mysql_num_fields(result_borrower);    
+
+        MYSQL_ROW row_borrower;
+        while ((row_borrower = mysql_fetch_row(result_borrower))) 
+            user_id = atoi(row_borrower[0]);
+            
+
+        
+        mysql_free_result(result_borrower);  
+        mysql_close(con);
+        
+        return user_id;
+        /***************** Fin Recuperer l'identifiant de l'emprunteur ********************/ 
 }
