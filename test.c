@@ -1,76 +1,23 @@
-#include <my_global.h>
-#include <mysql.h>
-#include <string.h>
-#include "biblio.h"
+#include <stdio.h>
+#include <stdlib.h>
 
-// void finish_with_error(MYSQL *con)
-// {
-//   fprintf(stderr, "%s\n", mysql_error(con));
-//   mysql_close(con);
-//   exit(1);        
-// }
 
-int main(int argc, char **argv)
+#define SHELLSCRIPT "\
+#/bin/bash \n\
+echo \"hello\" \n\
+echo \"how are you\" \n\
+echo \"today\" \n\
+python python.py \n\
+"
+/*Also you can write using char array without using MACRO*/
+/*You can do split it with many strings finally concatenate 
+  and send to the system(concatenated_string); */
+
+int main()
 {
-    Client client;
-    Client modif_client;
-    Book book;
-    User user;
-    // MYSQL *con = mysql_init(NULL);
-    printf("\n*** Creer maintenant un nouvelle client ***\n\n");
-
-
-
-    // printf("Nom : ");
-    // scanf("%s", client.lastname);
-    
-    // printf("Prenom : ");
-    // scanf("%s", client.firstname);
-  
-    // printf("numero carte etudiant : ");
-    // scanf("%s", client.numcart);
-    
-    // // 193939393
-    // printf("Age : ");
-    // scanf("%d", &client.age);
-
-    // printf("Classe : ");
-    // scanf("%s", client.classroom);
-
-    // printf("Titre du livre : ");
-    // scanf("%s", book.title);
-    
-    // printf("Description : ");
-    // scanf("%s", book.description);
-
-    // printf("Nombre de page : ");
-    // scanf("%d", &book.nb_page);
-
-    // printf("Auteur du livre : ");
-    // scanf("%s", book.author);
-
-    // printf("Categorie du livre : ");
-    // scanf("%s", book.category);
-    
-    // insertBook(book);
-    User user_session;
-    int flag_auth=1;
-    do
-    {
-        /* Authentification */
-        printf("Login : ");
-        scanf("%s", user_session.username);
-
-        printf("Mode de passe : ");
-        scanf("%s", user_session.password);
-        flag_auth =  checkIfUserExist(user_session);        
-    } while (flag_auth == 1);
-    //Authentification réussi
-    
-    // printf("\n\n");
-    // if(flag == 0)
-    //     printf("existe\n\n");
-    // else
-    //     printf("n'existe pas\n");    
+    puts("Will execute sh with the following script :");
+    puts(SHELLSCRIPT);
+    puts("Starting now:");
+    system(SHELLSCRIPT);    //it will run the script inside the c code. 
     return 0;
 }

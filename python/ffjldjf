@@ -1,0 +1,4 @@
+
+
+
+select count from borrow where book_id='%d' and client_id='%d'

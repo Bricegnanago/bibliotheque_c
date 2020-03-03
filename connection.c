@@ -29,247 +29,273 @@ int main(int argc, char **argv)
     
 
     printf("Bonjour à tous !!!\n\n");
-    printf("**********************************\n");
-    printf("\t 1 pour client \n");
-    printf("**********************************\n");
 
-    printf("**********************************\n");
-    printf("\t 2 pour livre \n");
-    printf("**********************************\n");
 
-    printf("**********************************\n");
-    printf("\t 3 pour empreinter un libre \n");
-    printf("**********************************\n");
-
-    printf("Votre choix : ");
-    scanf("%d", &choix);
-
-    switch (choix)
+    do
     {
-        case 1:
-            //Le choix est client
-            printf("**********************************\n");
-            printf("\t 11 ->  Creer enregistrer un nouveau client \n");
-            printf("**********************************\n");
+        printf("**********************************\n");
+        printf("\t 1 > Gerer client \n");
+        printf("**********************************\n");
 
-            printf("**********************************\n");
-            printf("\t 12 -> Mettre à jour les donnees d'un client \n");
-            printf("**********************************\n");
+        printf("**********************************\n");
+        printf("\t 2 -> Gerer pour livre \n");
+        printf("**********************************\n");
 
-            printf("**********************************\n");
-            printf("\t 13 -> supprimer un client \n");
-            printf("**********************************\n");
+        printf("**********************************\n");
+        printf("\t 3 -> Enregistrer un emprunt \n");
+        printf("**********************************\n");
 
-            printf("Votre choix : ");
-            scanf("%d", &choix_operation_on);
+        printf("**********************************\n");
+        printf("\t 4 -> Enregistrer un depot \n");
+        printf("**********************************\n");
+        printf("**********************************\n");
+        printf("\t 0 -> Quitter le programme \n");
+        printf("**********************************\n");
+        printf("Votre choix : ");
+        scanf("%d", &choix);
 
-            //Afficher tous les clients
-            readAll("Client");
-            //Fin affichage client
-            //Deconnexion
+        switch (choix)
+        {
+            case 1:
+                //Le choix est client
+                printf("**********************************\n");
+                printf("\t 11 ->  Creer enregistrer un nouveau client \n");
+                printf("**********************************\n");
 
-            switch (choix_operation_on)
-            {
-            case 11 :
-                //code création client
-                printf("\n*** Creer maintenant un nouveau client ***\n\n");
-                printf("Nom : ");
-                scanf("%s", client.lastname);                
+                printf("**********************************\n");
+                printf("\t 12 -> Mettre à jour les donnees d'un client \n");
+                printf("**********************************\n");
 
-                printf("prenom : ");
-                scanf("%s", client.firstname);
+                printf("**********************************\n");
+                printf("\t 13 -> supprimer un client \n");
+                printf("**********************************\n");
 
-                printf("numero carte etudiant : ");
-                scanf("%s", client.numcart);
+                printf("Votre choix : ");
+                scanf("%d", &choix_operation_on);
 
-                printf("Classe Etudiant : ");
-                scanf("%s", client.classroom);
+                //Afficher tous les clients
+                readAll("Client");
+                //Fin affichage client
+                //Deconnexion
 
-                printf("Age Etudiant : ");
-                scanf("%d", &client.age);
+                switch (choix_operation_on)
+                {
+                    case 11 :
+                        //code création client
+                        printf("\n*** Creer maintenant un nouveau client ***\n\n");
+                        printf("Nom : ");
+                        scanf("%s", client.lastname);                
 
-                //Debut insertion
-                insertClient(client);
-                //Fin insertion
-                break;
+                        printf("prenom : ");
+                        scanf("%s", client.firstname);
 
-            case 12 :
-                //code mise à jour donnée client
-                /* code Mise à jour*/
-                // Selectionner la variable à mettre à jour
-                // puis demander à l'utilisateur de saisir de nouvelles données
-                printf("Voici là tous les livres enregistré dans notre base\n\n");
-                printf("Veuillez saisir le titre du livre à mettre à jour : ");
-                scanf("%s", clientHost.firstname); //
-                
-                // verifier si la donnée existe
-                
-                printf("Nom etudiant: ");
-                scanf("%s", client.lastname);                
+                        printf("numero carte etudiant : ");
+                        scanf("%s", client.numcart);
 
-                printf("prenom etudiant : ");
-                scanf("%s", client.firstname);
+                        printf("Classe Etudiant : ");
+                        scanf("%s", client.classroom);
 
-                printf("numero carte etudiant : ");
-                scanf("%s", client.numcart);
+                        printf("Age Etudiant : ");
+                        scanf("%d", &client.age);
 
-                printf("Classe etudiant : ");
-                scanf("%s", client.classroom);
+                        //Debut insertion
+                        insertClient(client);
+                        //Fin insertion
+                        break;
 
-                printf("Age Etudiant : ");
-                scanf("%d", &client.age);
+                    case 12 :
+                        //code mise à jour donnée client
+                        /* code Mise à jour*/
+                        // Selectionner la variable à mettre à jour
+                        // puis demander à l'utilisateur de saisir de nouvelles données
+                        printf("Voici là tous les livres enregistré dans notre base\n\n");
+                        printf("Veuillez saisir le titre du livre à mettre à jour : ");
+                        scanf("%s", clientHost.firstname); //
+                        
+                        // verifier si la donnée existe
+                        
+                        printf("Nom etudiant: ");
+                        scanf("%s", client.lastname);                
 
-                // mise à jour
-                updateClient(clientHost, client);
-                break;
-            case 13 :
-                //code   suppression client
-                printf("Veuillez saisir le nom du client à supprimer : ");
-                scanf("%s", client.firstname);
-                removeClient(client);
-                break;
-                
-            default:
-                printf("Saisie incorrecte !!!\n");
-                break;
-            }
-            break;
-        
-        case 2:
-            //Le choix est livre
-            //Afficher avant la liste de tous les utilisateurs
-            printf("**********************************\n");
-            printf("\t 21 ->  Creer enregistrer un nouveau Livre \n");
-            printf("**********************************\n");
+                        printf("prenom etudiant : ");
+                        scanf("%s", client.firstname);
 
-            printf("**********************************\n");
-            printf("\t 22 -> Mettre à jour les donnees d'un Livre \n");
-            printf("**********************************\n");
+                        printf("numero carte etudiant : ");
+                        scanf("%s", client.numcart);
 
-            printf("**********************************\n");
-            printf("\t 23 -> supprimer un Livre \n");
-            printf("**********************************\n");
+                        printf("Classe etudiant : ");
+                        scanf("%s", client.classroom);
 
-            printf("Votre choix : ");
-            scanf("%d", &choix_operation_on);
+                        printf("Age Etudiant : ");
+                        scanf("%d", &client.age);
 
-
-            //Debut affichage livre
-            readAll("Book");
-
-            //Fin affichage livre           
-            //Deconnexion
-            switch (choix_operation_on)
-            {
-            case 21:
-                /* code creation livres*/
-                // 1 - L'utilisateur renseigne les informations du livre à inserer
-                // livre_id, nb_page author description title category created last_update
-                printf("Veuillez renseigner les informations concernant le nouveau livre !!!\n\n");
-
-                printf("Titre du livre : ");
-                scanf("%s", book.title);
-
-                printf("Description : ");
-                scanf("%s", book.description);
-
-                printf("Auteur du livre : ");
-                scanf("%s", book.author);
-
-                printf("Nombre de pages : ");
-                scanf("%d", &book.nb_page);                            
-                
-                printf("Categorie : ");
-                scanf("%s", book.category);
-
-                printf("Quantité en stock : ");
-                scanf("%d", &book.qty);
-                // insertion
-                insertBook(book);                
-                
+                        // mise à jour
+                        updateClient(clientHost, client);
+                        break;
+                    case 13 :
+                        //code   suppression client
+                        printf("Veuillez saisir le nom du client à supprimer : ");
+                        scanf("%s", client.firstname);
+                        removeClient(client);
+                        break;
+                        
+                    default:
+                        printf("Saisie incorrecte !!!\n");
+                        break;
+                }
                 break;
             
+            case 2:
+                //Le choix est livre
+                //Afficher avant la liste de tous les utilisateurs
+                printf("**********************************\n");
+                printf("\t 21 ->  Creer enregistrer un nouveau Livre \n");
+                printf("**********************************\n");
 
-            case 22:
-                /* code Mise à jour*/
-                // Selectionner la variable à mettre à jour
-                // puis demander à l'utilisateur de saisir de nouvelles données
-                printf("Voici là tous les livres enregistrés dans notre base\n\n");
-                printf("Veuillez saisir le titre du livre à mettre à jour : ");
+                printf("**********************************\n");
+                printf("\t 22 -> Mettre à jour les donnees d'un Livre \n");
+                printf("**********************************\n");
+
+                printf("**********************************\n");
+                printf("\t 23 -> supprimer un Livre \n");
+                printf("**********************************\n");
+
+                printf("Votre choix : ");
+                scanf("%d", &choix_operation_on);
+
+
+                //Debut affichage livre
+                readAll("Book");
+
+                //Fin affichage livre           
+                //Deconnexion
+                switch (choix_operation_on)
+                {
+                case 21:
+                    /* code creation livres*/
+                    // 1 - L'utilisateur renseigne les informations du livre à inserer
+                    // livre_id, nb_page author description title category created last_update
+                    printf("Veuillez renseigner les informations concernant le nouveau livre !!!\n\n");
+
+                    printf("Titre du livre : ");
+                    scanf("%s", book.title);
+
+                    printf("Description : ");
+                    scanf("%s", book.description);
+
+                    printf("Auteur du livre : ");
+                    scanf("%s", book.author);
+
+                    printf("Nombre de pages : ");
+                    scanf("%d", &book.nb_page);                            
+                    
+                    printf("Categorie : ");
+                    scanf("%s", book.category);
+
+                    printf("Quantité en stock : ");
+                    scanf("%d", &book.qty);
+                    // insertion
+                    insertBook(book);                
+                    
+                    break;
+                
+
+                case 22:
+                    /* code Mise à jour*/
+                    // Selectionner la variable à mettre à jour
+                    // puis demander à l'utilisateur de saisir de nouvelles données
+                    printf("Voici là tous les livres enregistrés dans notre base\n\n");
+                    printf("Veuillez saisir le titre du livre à mettre à jour : ");
+                    scanf("%s", bookHost.title);
+                    
+                    // verifier si la donnée existe
+                    
+                    printf("\n Titre du livre : ");
+                    scanf("%s", book.title);
+
+                    printf("Description : ");
+                    scanf("%s", book.description);
+
+                    printf("Auteur du livre : ");
+                    scanf("%s", book.author);
+
+                    printf("Nombre de pages : ");
+                    scanf("%d", &book.nb_page);                            
+                    
+                    printf("Categorie : ");
+                    scanf("%s", book.category);
+
+                    updateBook(bookHost, book);
+
+                    break;
+
+                case 23:
+                    //suppression code of book
+                    printf("Veuillez saisir le nom du client à supprimer : ");
+                    scanf("%s", book.title);
+                    removeBook(book);
+                    break;            
+                default:
+                    printf("Saisie incorrecte");
+                    break;
+                }
+
+                break;
+            
+            case 3:
+                // code empreint            
+                printf("Quel livre aimeriez-vous emprunter ?\n\n");
+                /********* Info Client ********/
+                printf("Veuillez saisir le nom du client : ");
+                scanf("%s", client.firstname);
+                printf("Veuillez saisir le numero de carte du client : ");
+                scanf("%s", client.numcart);
+
+                printf("Saisir ici le title du livre : ");
                 scanf("%s", bookHost.title);
+
+                borrowOneBook(bookHost, client, user_session);
                 
-                // verifier si la donnée existe
-                
-                printf("\n Titre du livre : ");
-                scanf("%s", book.title);
-
-                printf("Description : ");
-                scanf("%s", book.description);
-
-                printf("Auteur du livre : ");
-                scanf("%s", book.author);
-
-                printf("Nombre de pages : ");
-                scanf("%d", &book.nb_page);                            
-                
-                printf("Categorie : ");
-                scanf("%s", book.category);
-
-                updateBook(bookHost, book);
-
+                printf("*********** \n\n Opération effectuée avec succès ***************** \n\n");
                 break;
 
-            case 23:
-                //suppression code of book
-                printf("Veuillez saisir le nom du client à supprimer : ");
-                scanf("%s", book.title);
-                removeBook(book);
-                break;            
+            case 4:
+                // code empreint            
+                printf("Quel livre aimeriez-vous deposer ?\n\n");
+                /********* Info Client ********/
+                printf("Veuillez saisir le nom du client : ");
+                scanf("%s", client.firstname);
+                printf("Veuillez saisir le numero de carte du client : ");
+                scanf("%s", client.numcart);
+                
+
+                printf("Saisir ici le title du livre : ");
+                scanf("%s", bookHost.title);
+
+                returnOneBook(bookHost, client, user_session);
+                
+                printf("*********** \n\n Opération effectuée avec succès ***************** \n\n");
+                break;
+            
             default:
-                printf("Saisie incorrecte");
+                printf("\n Saisie incorrecte !!! \n\n");
+                
                 break;
-            }
+        }
+        printf("Voulez-vous vraiment quitter le programme 0 (Oui) et 1-9 (Non) ?\n");
+        printf("Saisir ici : ");
+        scanf("%d", &choix);
+        if(choix == 0)
+            printf("\nBye\n");
 
-            break;
-        
-        case 3:
-            // code empreint            
-            printf("Quel livre aimeriez-vous emprunter ?\n\n");
-            /********* Info Client ********/
-            printf("Veuillez saisir le nom du client : ");
-            scanf("%s", client.firstname);
-            printf("Veuillez saisir le numero de carte du client : ");
-            scanf("%s", client.numcart);
 
-            printf("Saisir ici le title du livre : ");
-            scanf("%s", bookHost.title);
+    } while (choix != 0);
+    
+    
 
-            borrowOneBook(bookHost, client, user_session);
-            
-            printf("*********** \n\n Opération effectuée avec succès ***************** \n\n");
-            break;
 
-        case 4:
-            // code empreint            
-            printf("Quel livre aimeriez-vous deposer ?\n\n");
-            /********* Info Client ********/
-            printf("Veuillez saisir le nom du client : ");
-            scanf("%s", client.firstname);
-            printf("Veuillez saisir le numero de carte du client : ");
-            scanf("%s", client.numcart);
-
-            printf("Saisir ici le title du livre : ");
-            scanf("%s", bookHost.title);
-
-            returnOneBook(bookHost, client, user_session);
-            
-            printf("*********** \n\n Opération effectuée avec succès ***************** \n\n");
-            break;
-        
-        default:
-            printf("\n Saisie incorrecte !!! \n\n");
-            break;
-    }
-  
+    
+    
+   
   exit(0);
 }

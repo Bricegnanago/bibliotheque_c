@@ -3,6 +3,8 @@
         "array": "cpp",
         "string": "cpp",
         "string_view": "cpp",
-        "system_error": "c"
-    }
+        "system_error": "c",
+        "cstdlib": "cpp"
+    },
+    "python.pythonPath": "/usr/bin/python3"
 }
